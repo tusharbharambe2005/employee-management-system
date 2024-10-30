@@ -7,7 +7,7 @@ import { AuthContext } from './context/AuthProvider';
 const App = () => {
   const [user, setUser] = useState(null);
   const [loggedInUserData, setloggedInUserData] = useState(null)
-  const authData = useContext(AuthContext);
+  const [userData,setUserData] = useContext(AuthContext);
   // console.log(authData?.admin); // Using optional chaining to prevent errors
 
   useEffect(() => {
@@ -23,15 +23,15 @@ const App = () => {
   
 
   const handleLogin = (email, password) => {
-    if (authData) { 
+    if (userData) { 
       // Check for admin login
       if (email=='admin@me.com' && password =='123') {
         setUser('admin');
         localStorage.setItem("loggedInUser",JSON.stringify({role:'admin'}))
       }
       // Check for employee login
-      else if (authData) {
-        const employee = authData.employees.find((e) => e.Email == email && e.Password == password)
+      else if (userData) {
+        const employee = userData.find((e) => e.Email == email && e.Password == password)
         if (employee) {
           setUser({role:'employee'});  
           setloggedInUserData(employee)
@@ -48,9 +48,9 @@ const App = () => {
       {!user ? (
         <Login handleLogin={handleLogin} />
       ) : user == 'admin' ? (
-        <AdminDashbord />
+        <AdminDashbord changeUser={setUser}/>
       ) : (
-        <EmployeeDashbord data={loggedInUserData}/> 
+        <EmployeeDashbord changeUser={setUser} data={loggedInUserData}/> 
       )}
     </>
   );
